@@ -40,6 +40,9 @@ module Gruff
 
     DEFAULT_TARGET_WIDTH = 800
 
+    # Show vertical lines
+    attr_accessor :show_vertical_lines
+
     # Blank space above the graph
     attr_accessor :top_margin
 
@@ -675,7 +678,7 @@ module Gruff
         y = @graph_top + @graph_height - index.to_f * @increment_scaled
 
         @d = @d.stroke(@marker_color)
-        @d = @d.stroke_width 1
+        @d = @d.stroke_width 0.3
         @d = @d.line(@graph_left, y, @graph_right, y)
 
         marker_label = index * @increment + @minimum_value.to_f
@@ -692,6 +695,16 @@ module Gruff
           @graph_left - LABEL_MARGIN, 1.0,
           0.0, y,
           label(marker_label), @scale)
+        end
+
+        if @show_vertical_lines
+          # draw vertical lines
+          double_inc = @increment_scaled
+          ((@graph_right/double_inc)+1).to_i.times do |index|
+            @d = @d.stroke(@marker_color)
+            @d = @d.stroke_width 1
+            @d = @d.line(index.to_f*double_inc, @graph_bottom, index.to_f*double_inc, @graph_top)
+          end
         end
       end
 
